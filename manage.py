@@ -1,14 +1,17 @@
-from flask import Flask
-from info.moduel.index import index_blue
+from flask_migrate import Migrate, MigrateCommand
+from flask_script import Manager
 
-app = Flask(__name__)
-
-app.register_blueprint(index_blue)
-
+from info import create_app,db
 
 def main():
-    app.run()
+    # 数据库迁移
+    app,redis_store = create_app()
 
+    manager = Manager(app)
+
+    Migrate(app, db)
+    manager.add_command('db', MigrateCommand)
+    manager.run()
 
 if __name__ == '__main__':
     main()
